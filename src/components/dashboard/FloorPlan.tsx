@@ -95,32 +95,36 @@ export const FloorPlan = ({ onDeskClick, userBookings = [] }: FloorPlanProps) =>
   return (
     <div className="relative w-full max-w-4xl mx-auto">
       {/* Floor plan image */}
-      <div className="relative">
-        <img
-          src={floorPlanImage}
-          alt="Office floor plan"
-          className="w-full h-auto rounded-lg shadow-custom-sm"
-        />
-        
-        {/* Desk markers */}
-        {desks.map((desk) => {
-          const status = getDeskStatus(desk);
-          return (
-            <button
-              key={desk.id}
-              className={`absolute w-6 h-6 rounded-full border-2 transition-all duration-200 hover:scale-110 flex items-center justify-center text-xs font-bold text-white shadow-md ${getDeskColor(status)} ${getDeskCursor(status)}`}
-              style={{
-                left: `${desk.x}%`,
-                top: `${desk.y}%`,
-                transform: 'translate(-50%, -50%)'
-              }}
-              onClick={() => onDeskClick(desk.id, status)}
-              title={`Desk ${desk.id} - ${status}`}
-            >
-              {desk.id.split('-')[1]}
-            </button>
-          );
-        })}
+      <div className="relative overflow-x-auto pb-4">
+        <div className="min-w-[800px] relative">
+          <img
+            src={floorPlanImage}
+            alt="Office floor plan"
+            className="w-full h-auto rounded-lg shadow-custom-sm"
+          />
+          
+          {/* Desk markers */}
+          {desks.map((desk) => {
+            const status = getDeskStatus(desk);
+            return (
+              <button
+                key={desk.id}
+                className={`absolute w-8 h-8 rounded-full border-2 transition-all duration-300 hover:scale-125 hover:shadow-custom-lg hover:z-10 focus:scale-125 focus:shadow-custom-lg focus:z-10 focus:outline-none focus:ring-2 focus:ring-primary/50 flex items-center justify-center text-xs font-bold text-white shadow-md animate-bounce-in interactive-element ${getDeskColor(status)} ${getDeskCursor(status)}`}
+                style={{
+                  left: `${desk.x}%`,
+                  top: `${desk.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  animationDelay: `${Math.random() * 0.5}s`
+                }}
+                onClick={() => onDeskClick(desk.id, status)}
+                title={`Desk ${desk.id} - ${status}`}
+                disabled={status === 'unavailable' || status === 'inactive'}
+              >
+                {desk.id.split('-')[1]}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Legend */}
@@ -148,13 +152,19 @@ export const FloorPlan = ({ onDeskClick, userBookings = [] }: FloorPlanProps) =>
       </div>
 
       {/* Instructions */}
-      <div className="mt-4 text-center text-muted-foreground text-sm">
-        Click on available desks (green) to book them. Orange desks are your current bookings.
+      <div className="mt-4 text-center text-muted-foreground text-sm animate-fade-in">
+        <p className="mb-2">
+          Click on available desks (green) to book them. Orange desks are your current bookings.
+        </p>
         {userBookings.some(b => b.status === 'reserved') && (
-          <p className="mt-1 text-warning font-medium">
+          <p className="animate-pulse-soft text-warning font-medium bg-warning/10 px-4 py-2 rounded-lg inline-block">
             Connect to office WiFi to automatically check in to your reserved desks.
           </p>
         )}
+        <div className="mt-2 text-xs text-muted-foreground/60">
+          💡 <span className="hidden sm:inline">Tap and hold on mobile or </span>
+          Hover over desks for more details
+        </div>
       </div>
     </div>
   );

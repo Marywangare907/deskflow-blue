@@ -87,17 +87,17 @@ const Auth = () => {
           Back to Home
         </Link>
 
-        <Card className="bg-white/95 backdrop-blur-sm shadow-custom-xl">
+        <Card className="bg-white/95 backdrop-blur-sm shadow-custom-xl animate-scale-in">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="bg-gradient-primary p-3 rounded-lg">
+              <div className="bg-gradient-primary p-3 rounded-lg animate-bounce-in">
                 <Building className="h-8 w-8 text-primary-foreground" />
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-primary">
+            <CardTitle className="text-2xl font-bold text-primary animate-fade-in">
               {isLogin ? "Welcome Back" : "Create Account"}
             </CardTitle>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground animate-fade-in" style={{ animationDelay: '0.2s' }}>
               {isLogin 
                 ? "Sign in to access your DeskFlow dashboard" 
                 : "Join DeskFlow to manage your workspace"
@@ -108,7 +108,7 @@ const Auth = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
-                <div className="space-y-2">
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: '0.1s' }}>
                   <Label htmlFor="name">Full Name</Label>
                   <Input
                     id="name"
@@ -117,12 +117,13 @@ const Auth = () => {
                     onChange={handleChange}
                     required={!isLogin}
                     placeholder="John Doe"
-                    className="border-primary/20 focus:border-primary"
+                    disabled={isSubmitting}
+                    className="border-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/40"
                   />
                 </div>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-2 animate-slide-up" style={{ animationDelay: '0.2s' }}>
                 <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
@@ -132,11 +133,12 @@ const Auth = () => {
                   onChange={handleChange}
                   required
                   placeholder="you@company.com"
-                  className="border-primary/20 focus:border-primary"
+                  disabled={isSubmitting}
+                  className="border-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/40"
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 animate-slide-up" style={{ animationDelay: '0.3s' }}>
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -146,12 +148,13 @@ const Auth = () => {
                   onChange={handleChange}
                   required
                   placeholder="••••••••"
-                  className="border-primary/20 focus:border-primary"
+                  disabled={isSubmitting}
+                  className="border-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/40"
                 />
               </div>
 
               {!isLogin && (
-                <div className="space-y-2">
+                <div className="space-y-2 animate-slide-up" style={{ animationDelay: '0.4s' }}>
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
                   <Input
                     id="confirmPassword"
@@ -161,27 +164,27 @@ const Auth = () => {
                     onChange={handleChange}
                     required={!isLogin}
                     placeholder="••••••••"
-                    className="border-primary/20 focus:border-primary"
+                    disabled={isSubmitting}
+                    className="border-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/40"
                   />
                 </div>
               )}
 
               <Button 
                 type="submit" 
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                className="w-full bg-gradient-primary hover:shadow-custom-md"
+                className="w-full bg-gradient-primary hover:shadow-custom-md animate-slide-up"
                 size="lg"
+                style={{ animationDelay: '0.5s' }}
               >
-                {isSubmitting 
-                  ? (isLogin ? "Signing In..." : "Creating Account...") 
-                  : (isLogin ? "Sign In" : "Create Account")
-                }
+                {isLogin ? "Sign In" : "Create Account"}
               </Button>
             </form>
 
             {/* Demo credentials */}
             {isLogin && (
-              <div className="mt-6 p-4 bg-secondary/20 rounded-lg">
+              <div className="mt-6 p-4 bg-gradient-card rounded-lg animate-fade-in border border-primary/10" style={{ animationDelay: '0.6s' }}>
                 <p className="text-sm font-semibold text-primary mb-2">Demo Credentials:</p>
                 <div className="text-xs text-muted-foreground space-y-1">
                   <div>User: user@demo.com / user123</div>
@@ -190,11 +193,12 @@ const Auth = () => {
               </div>
             )}
 
-            <div className="mt-6 text-center">
+            <div className="mt-6 text-center animate-fade-in" style={{ animationDelay: '0.7s' }}>
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:underline font-medium"
+                disabled={isSubmitting}
+                className="text-primary hover:underline font-medium transition-all duration-300 hover:text-primary/80"
               >
                 {isLogin 
                   ? "Don't have an account? Sign up" 

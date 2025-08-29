@@ -20,6 +20,7 @@ interface BookingModalProps {
 export const BookingModal = ({ isOpen, onClose, deskId, onConfirm }: BookingModalProps) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Get today and tomorrow dates
   const today = new Date();
@@ -59,12 +60,19 @@ export const BookingModal = ({ isOpen, onClose, deskId, onConfirm }: BookingModa
     "05:00 PM"
   ];
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (deskId && selectedDate && selectedTime) {
+      setIsLoading(true);
+      
+      // Simulate API call delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
       onConfirm(deskId, selectedDate, selectedTime);
+      
       // Reset form
       setSelectedDate("");
       setSelectedTime("");
+      setIsLoading(false);
     }
   };
 
@@ -76,7 +84,7 @@ export const BookingModal = ({ isOpen, onClose, deskId, onConfirm }: BookingModa
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md animate-scale-in">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2 text-primary">
             <div className="bg-gradient-primary p-2 rounded-lg">
@@ -88,13 +96,13 @@ export const BookingModal = ({ isOpen, onClose, deskId, onConfirm }: BookingModa
 
         <div className="space-y-6 py-4">
           {/* Date Selection */}
-          <div className="space-y-3">
+          <div className="space-y-3 animate-slide-up" style={{ animationDelay: '0.1s' }}>
             <Label className="text-base font-medium flex items-center space-x-2">
               <Calendar className="h-4 w-4" />
               <span>Select Date</span>
             </Label>
-            <Select value={selectedDate} onValueChange={setSelectedDate}>
-              <SelectTrigger className="border-primary/20 focus:border-primary">
+            <Select value={selectedDate} onValueChange={setSelectedDate} disabled={isLoading}>
+              <SelectTrigger className="border-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/40">
                 <SelectValue placeholder="Choose a date" />
               </SelectTrigger>
               <SelectContent>
@@ -109,13 +117,13 @@ export const BookingModal = ({ isOpen, onClose, deskId, onConfirm }: BookingModa
           </div>
 
           {/* Time Selection */}
-          <div className="space-y-3">
+          <div className="space-y-3 animate-slide-up" style={{ animationDelay: '0.2s' }}>
             <Label className="text-base font-medium flex items-center space-x-2">
               <Clock className="h-4 w-4" />
               <span>Select Time</span>
             </Label>
-            <Select value={selectedTime} onValueChange={setSelectedTime}>
-              <SelectTrigger className="border-primary/20 focus:border-primary">
+            <Select value={selectedTime} onValueChange={setSelectedTime} disabled={isLoading}>
+              <SelectTrigger className="border-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/40">
                 <SelectValue placeholder="Choose a time" />
               </SelectTrigger>
               <SelectContent className="max-h-60">
@@ -130,7 +138,7 @@ export const BookingModal = ({ isOpen, onClose, deskId, onConfirm }: BookingModa
 
           {/* Booking Summary */}
           {selectedDate && selectedTime && (
-            <div className="bg-secondary/20 rounded-lg p-4 space-y-2">
+            <div className="bg-gradient-card rounded-lg p-4 space-y-2 animate-fade-in border border-primary/10">
               <h4 className="font-medium text-primary">Booking Summary</h4>
               <div className="text-sm text-muted-foreground space-y-1">
                 <p><strong>Desk:</strong> {deskId}</p>
@@ -141,26 +149,28 @@ export const BookingModal = ({ isOpen, onClose, deskId, onConfirm }: BookingModa
           )}
 
           {/* Action Buttons */}
-          <div className="flex space-x-3 pt-4">
+          <div className="flex space-x-3 pt-4 animate-slide-up" style={{ animationDelay: '0.3s' }}>
             <Button 
               variant="outline" 
               onClick={handleClose}
               className="flex-1"
+              disabled={isLoading}
             >
               Cancel
             </Button>
             <Button 
               onClick={handleConfirm}
               disabled={!selectedDate || !selectedTime}
+              loading={isLoading}
               className="flex-1 bg-gradient-primary hover:shadow-custom-md"
             >
-              Confirm Booking
+              {isLoading ? "Booking..." : "Confirm Booking"}
             </Button>
           </div>
         </div>
 
         {/* Additional Info */}
-        <div className="text-xs text-muted-foreground bg-muted/20 rounded-lg p-3">
+        <div className="text-xs text-muted-foreground bg-muted/20 rounded-lg p-3 animate-fade-in">
           <p className="font-medium mb-1">Booking Policy:</p>
           <ul className="space-y-1">
             <li>• Bookings can only be made for today or tomorrow</li>

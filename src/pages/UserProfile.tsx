@@ -21,6 +21,8 @@ import { Link } from "react-router-dom";
 
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [profileData, setProfileData] = useState({
     name: "John Doe",
     email: "user@demo.com",
@@ -51,9 +53,41 @@ const UserProfile = () => {
     averageStay: "6.5 hours"
   };
 
-  const handleSave = () => {
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!editData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    
+    if (!editData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(editData.email)) {
+      newErrors.email = "Please enter a valid email";
+    }
+    
+    if (!editData.username.trim()) {
+      newErrors.username = "Username is required";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) {
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    // Simulate API call delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     setProfileData(editData);
     setIsEditing(false);
+    setIsLoading(false);
+    setErrors({});
     toast({
       title: "Profile Updated",
       description: "Your profile information has been saved successfully.",
@@ -66,10 +100,19 @@ const UserProfile = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setEditData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -131,6 +174,9 @@ const UserProfile = () => {
                     size="sm"
                     variant={isEditing ? "default" : "outline"}
                     onClick={isEditing ? handleSave : () => setIsEditing(true)}
+                    loading={isLoading}
+                    disabled={isLoading}
+                    className="transition-all duration-300"
                   >
                     {isEditing ? (
                       <>
@@ -161,40 +207,67 @@ const UserProfile = () => {
                 {/* Profile Fields */}
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name" className={errors.name ? "text-destructive" : ""}>
+                      Full Name {errors.name && <span className="text-destructive">*</span>}
+                    </Label>
                     <Input
                       id="name"
                       name="name"
                       value={isEditing ? editData.name : profileData.name}
                       onChange={handleChange}
-                      disabled={!isEditing}
-                      className="border-primary/20 focus:border-primary"
+                      disabled={!isEditing || isLoading}
+                      className={`border-primary/20 focus:border-primary transition-all duration-300 ${
+                        errors.name 
+                          ? "border-destructive focus:border-destructive animate-shake" 
+                          : "hover:border-primary/40"
+                      }`}
                     />
+                    {errors.name && (
+                      <p className="text-sm text-destructive mt-1 animate-fade-in">{errors.name}</p>
+                    )}
                   </div>
 
                   <div>
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email" className={errors.email ? "text-destructive" : ""}>
+                      Email Address {errors.email && <span className="text-destructive">*</span>}
+                    </Label>
                     <Input
                       id="email"
                       name="email"
                       type="email"
                       value={isEditing ? editData.email : profileData.email}
                       onChange={handleChange}
-                      disabled={!isEditing}
-                      className="border-primary/20 focus:border-primary"
+                      disabled={!isEditing || isLoading}
+                      className={`border-primary/20 focus:border-primary transition-all duration-300 ${
+                        errors.email 
+                          ? "border-destructive focus:border-destructive animate-shake" 
+                          : "hover:border-primary/40"
+                      }`}
                     />
+                    {errors.email && (
+                      <p className="text-sm text-destructive mt-1 animate-fade-in">{errors.email}</p>
+                    )}
                   </div>
 
                   <div>
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="username" className={errors.username ? "text-destructive" : ""}>
+                      Username {errors.username && <span className="text-destructive">*</span>}
+                    </Label>
                     <Input
                       id="username"
                       name="username"
                       value={isEditing ? editData.username : profileData.username}
                       onChange={handleChange}
-                      disabled={!isEditing}
-                      className="border-primary/20 focus:border-primary"
+                      disabled={!isEditing || isLoading}
+                      className={`border-primary/20 focus:border-primary transition-all duration-300 ${
+                        errors.username 
+                          ? "border-destructive focus:border-destructive animate-shake" 
+                          : "hover:border-primary/40"
+                      }`}
                     />
+                    {errors.username && (
+                      <p className="text-sm text-destructive mt-1 animate-fade-in">{errors.username}</p>
+                    )}
                   </div>
 
                   <div>
@@ -210,11 +283,23 @@ const UserProfile = () => {
                 </div>
 
                 {isEditing && (
-                  <div className="flex space-x-2">
-                    <Button size="sm" onClick={handleSave} className="flex-1">
+                  <div className="flex space-x-2 animate-fade-in">
+                    <Button 
+                      size="sm" 
+                      onClick={handleSave} 
+                      className="flex-1"
+                      loading={isLoading}
+                      disabled={isLoading}
+                    >
                       Save Changes
                     </Button>
-                    <Button size="sm" variant="outline" onClick={handleCancel} className="flex-1">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={handleCancel} 
+                      className="flex-1"
+                      disabled={isLoading}
+                    >
                       Cancel
                     </Button>
                   </div>

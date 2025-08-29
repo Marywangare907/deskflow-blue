@@ -21,6 +21,7 @@ const UserDashboard = () => {
   const [selectedDesk, setSelectedDesk] = useState<string | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isConnectedToWifi, setIsConnectedToWifi] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [userBookings, setUserBookings] = useState([
     { id: "1", deskId: "D-15", date: "2024-01-15", status: "checked-in" },
     { id: "2", deskId: "D-22", date: "2024-01-14", status: "completed" },
